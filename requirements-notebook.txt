@@ -1,0 +1,5 @@
+-r requirements.txt
+
+# Notebook kernel and interactive execution in VS Code.
+ipykernel==7.4.0
+ipython==9.17.1

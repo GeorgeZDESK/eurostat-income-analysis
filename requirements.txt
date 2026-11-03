@@ -1,0 +1,6 @@
+# Recorded with Python 3.13.17.
+pandas==3.1.0
+matplotlib==3.11.2
+
+# Numerical dependency used in the tested environment.
+numpy==2.5.4
