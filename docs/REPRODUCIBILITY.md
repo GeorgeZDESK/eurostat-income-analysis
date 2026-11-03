@@ -4,6 +4,13 @@
 
 The recorded environment uses Python 3.13.17 on Windows. Use VS Code with the Python and Jupyter extensions and an activated Python environment matching that version.
 
+To create the separate Conda environment used for the clean test, run these commands from an Anaconda Prompt:
+
+```bash
+conda create -n eurostat-income-repro python=3.13.17 pip --no-default-packages
+conda activate eurostat-income-repro
+```
+
 From the repository root, install the recorded packages and check their dependencies:
 
 ```bash
@@ -69,7 +76,11 @@ The numerical check also verifies the Greek endpoint survey years, 2020 and 2024
 
 ## Verification status
 
-Income validation, raw-preservation checks, all three HICP merge reports and the numerical baseline passed in the author's existing environment. `pip check` reported `No broken requirements found.`
+On 2026-11-03, the author created a separate Conda environment, `eurostat-income-repro`, with Python 3.13.17, installed `requirements-notebook.txt`, and ran `01`, `02` and `03` in order with fresh kernels in VS Code. `pip check` reported `No broken requirements found.`
 
-A clean installation and full reproduction from the requirements files remain pending. The files record the observed package versions; they are not a complete lock of transitive dependencies.
+The submitted notebooks were reviewed after this run. Their non-empty code cells have consecutive execution counts starting at 1: 58 in `01`, 33 in `02` and 41 in `03`. None contains an error output or stderr output. All three identify the test kernel. The environment output in `03` records the Python executable inside `eurostat-income-repro`, the expected package versions and `notebooks/` as the working directory.
+
+Income validation, exact comparison with the selected raw records, all three HICP merge reports and the numerical baseline passed. Comparison with the earlier notebook code confirmed that the analytical calculations and chart code were preserved; the changes add validation, shared HICP joins and environment diagnostics.
+
+Execution evidence comes from the author's Windows run; the review covered the submitted code and saved outputs. This verifies reproduction of the current raw snapshot in that environment. The requirements files pin the recorded packages, but are not a complete lock of transitive dependencies.
 
