@@ -1,5 +1,7 @@
 # Eurostat Income Analysis
 
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://eurostat-income-analysis-thucepf9uar5ybkg9nxeyg.streamlit.app/)
+
 Python analysis of equivalised disposable income in Greece and Europe: trends, age groups, inflation, housing costs and urbanisation.
 
 ## Data
