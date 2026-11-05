@@ -27,6 +27,8 @@ Apply sidebar filters with **Load data**. Responses are cached for up to one hou
 
 Recorded environment: Python 3.13.17 and VS Code. See [setup and execution](docs/REPRODUCIBILITY.md). Outputs: `data/processed/` and `reports/figures/`.
 
+[EUR/PPS comparison](notebooks/04_eur_pps_comparison.ipynb) uses live Eurostat API data from survey year 2003 onwards, with a fixed country set across years. In the recorded run, only 2018 has complete coverage of all 37 countries.
+
 ## Verified example
 
 Greece's median income increased **9.29% after inflation** between income years 2019 and 2023.

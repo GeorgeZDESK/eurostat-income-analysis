@@ -1,0 +1,389 @@
+{
+  "dataset": "ilc_di03",
+  "request_url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/ilc_di03?lang=EN&freq=A&age=TOTAL&sex=T&geoLevel=country&sinceTimePeriod=2003",
+  "retrieved_at_utc": "2026-11-05T20:11:01+00:00",
+  "survey_year_start": 2003,
+  "survey_year_end": 2025,
+  "fixed_countries": [
+    "AL",
+    "AT",
+    "BE",
+    "BG",
+    "HR",
+    "CY",
+    "CZ",
+    "DK",
+    "EE",
+    "FI",
+    "FR",
+    "DE",
+    "EL",
+    "HU",
+    "IS",
+    "IE",
+    "IT",
+    "XK",
+    "LV",
+    "LT",
+    "LU",
+    "MT",
+    "ME",
+    "NL",
+    "MK",
+    "NO",
+    "PL",
+    "PT",
+    "RO",
+    "RS",
+    "SK",
+    "SI",
+    "ES",
+    "SE",
+    "CH",
+    "TR",
+    "UK"
+  ],
+  "filters": {
+    "freq": "A",
+    "age": "TOTAL",
+    "sex": "T",
+    "statinfo": "MED_EI",
+    "units": [
+      "EUR",
+      "PPS"
+    ]
+  },
+  "ranking_years": [
+    2018
+  ],
+  "rank_method": "Competition ranking: min, descending",
+  "rank_change_definition": "rank_EUR - rank_PPS",
+  "eurostat_metadata": {
+    "version": "2.0",
+    "class": "dataset",
+    "label": "Mean and median income by age and sex",
+    "source": "ESTAT",
+    "updated": "2026-10-20T11:00:00+0200",
+    "id": [
+      "freq",
+      "age",
+      "sex",
+      "statinfo",
+      "unit",
+      "geo",
+      "time"
+    ],
+    "size": [
+      1,
+      1,
+      1,
+      2,
+      3,
+      37,
+      23
+    ],
+    "dimension": {
+      "freq": {
+        "label": "Time frequency",
+        "category": {
+          "index": {
+            "A": 0
+          },
+          "label": {
+            "A": "Annual"
+          }
+        }
+      },
+      "age": {
+        "label": "Age class",
+        "category": {
+          "index": {
+            "TOTAL": 0
+          },
+          "label": {
+            "TOTAL": "Total"
+          }
+        }
+      },
+      "sex": {
+        "label": "Sex",
+        "category": {
+          "index": {
+            "T": 0
+          },
+          "label": {
+            "T": "Total"
+          }
+        }
+      },
+      "statinfo": {
+        "label": "Statistical information",
+        "category": {
+          "index": {
+            "MEAN_EI": 0,
+            "MED_EI": 1
+          },
+          "label": {
+            "MEAN_EI": "Mean equivalised income",
+            "MED_EI": "Median equivalised income"
+          }
+        }
+      },
+      "unit": {
+        "label": "Unit of measure",
+        "category": {
+          "index": {
+            "EUR": 0,
+            "NAC": 1,
+            "PPS": 2
+          },
+          "label": {
+            "EUR": "Euro",
+            "NAC": "National currency",
+            "PPS": "Purchasing power standard (PPS)"
+          }
+        }
+      },
+      "geo": {
+        "label": "Geopolitical entity (reporting)",
+        "category": {
+          "index": {
+            "BE": 0,
+            "BG": 1,
+            "CZ": 2,
+            "DK": 3,
+            "DE": 4,
+            "EE": 5,
+            "IE": 6,
+            "EL": 7,
+            "ES": 8,
+            "FR": 9,
+            "HR": 10,
+            "IT": 11,
+            "CY": 12,
+            "LV": 13,
+            "LT": 14,
+            "LU": 15,
+            "HU": 16,
+            "MT": 17,
+            "NL": 18,
+            "AT": 19,
+            "PL": 20,
+            "PT": 21,
+            "RO": 22,
+            "SI": 23,
+            "SK": 24,
+            "FI": 25,
+            "SE": 26,
+            "IS": 27,
+            "NO": 28,
+            "CH": 29,
+            "UK": 30,
+            "ME": 31,
+            "MK": 32,
+            "AL": 33,
+            "RS": 34,
+            "TR": 35,
+            "XK": 36
+          },
+          "label": {
+            "BE": "Belgium",
+            "BG": "Bulgaria",
+            "CZ": "Czechia",
+            "DK": "Denmark",
+            "DE": "Germany",
+            "EE": "Estonia",
+            "IE": "Ireland",
+            "EL": "Greece",
+            "ES": "Spain",
+            "FR": "France",
+            "HR": "Croatia",
+            "IT": "Italy",
+            "CY": "Cyprus",
+            "LV": "Latvia",
+            "LT": "Lithuania",
+            "LU": "Luxembourg",
+            "HU": "Hungary",
+            "MT": "Malta",
+            "NL": "Netherlands",
+            "AT": "Austria",
+            "PL": "Poland",
+            "PT": "Portugal",
+            "RO": "Romania",
+            "SI": "Slovenia",
+            "SK": "Slovakia",
+            "FI": "Finland",
+            "SE": "Sweden",
+            "IS": "Iceland",
+            "NO": "Norway",
+            "CH": "Switzerland",
+            "UK": "United Kingdom",
+            "ME": "Montenegro",
+            "MK": "North Macedonia",
+            "AL": "Albania",
+            "RS": "Serbia",
+            "TR": "Türkiye",
+            "XK": "Kosovo*"
+          }
+        }
+      },
+      "time": {
+        "label": "Time",
+        "category": {
+          "index": {
+            "2003": 0,
+            "2004": 1,
+            "2005": 2,
+            "2006": 3,
+            "2007": 4,
+            "2008": 5,
+            "2009": 6,
+            "2010": 7,
+            "2011": 8,
+            "2012": 9,
+            "2013": 10,
+            "2014": 11,
+            "2015": 12,
+            "2016": 13,
+            "2017": 14,
+            "2018": 15,
+            "2019": 16,
+            "2020": 17,
+            "2021": 18,
+            "2022": 19,
+            "2023": 20,
+            "2024": 21,
+            "2025": 22
+          },
+          "label": {
+            "2003": "2003",
+            "2004": "2004",
+            "2005": "2005",
+            "2006": "2006",
+            "2007": "2007",
+            "2008": "2008",
+            "2009": "2009",
+            "2010": "2010",
+            "2011": "2011",
+            "2012": "2012",
+            "2013": "2013",
+            "2014": "2014",
+            "2015": "2015",
+            "2016": "2016",
+            "2017": "2017",
+            "2018": "2018",
+            "2019": "2019",
+            "2020": "2020",
+            "2021": "2021",
+            "2022": "2022",
+            "2023": "2023",
+            "2024": "2024",
+            "2025": "2025"
+          }
+        }
+      }
+    },
+    "extension": {
+      "lang": "EN",
+      "id": "ILC_DI03",
+      "agencyId": "ESTAT",
+      "version": "1.0",
+      "datastructure": {
+        "id": "ILC_DI03",
+        "agencyId": "ESTAT",
+        "version": "81.0"
+      },
+      "annotation": [
+        {
+          "type": "CREATED",
+          "date": "2009-03-27T17:52:43+0100"
+        },
+        {
+          "type": "DISSEMINATION_DOI_XML",
+          "title": "<adms:identifier xmlns:adms=\"http://www.w3.org/ns/adms#\" xmlns:skos=\"http://www.w3.org/2004/02/skos/core.html\" xmlns:dct=\"http://purl.org/dc/terms/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><adms:Identifier rdf:about=\"https://doi.org/10.2908/ILC_DI03\"><skos:notation rdf:datatype=\"http://purl.org/spar/datacite/doi\">10.2908/ILC_DI03</skos:notation><dct:creator rdf:resource=\"http://publications.europa.eu/resource/authority/corporate-body/ESTAT\"/><dct:issued rdf:datatype=\"http://www.w3.org/2001/XMLSchema#date\">2023-01-23</dct:issued></adms:Identifier></adms:identifier>"
+        },
+        {
+          "type": "DISSEMINATION_EXPLANATORY_LINK",
+          "title": "info-category",
+          "href": "https://ec.europa.eu/eurostat/databrowser-backend/api/public/explanatory-notes/get/Info_note_ILC_20251009.pdf",
+          "text": "Information note"
+        },
+        {
+          "type": "DISSEMINATION_EXPLANATORY_LINK",
+          "title": "info-category",
+          "href": "https://ec.europa.eu/eurostat/databrowser-backend/api/public/explanatory-notes/get/Info_note_ILC_20251009.pdf"
+        },
+        {
+          "type": "DISSEMINATION_EXPLANATORY_LINK",
+          "title": "info-category",
+          "href": "https://ec.europa.eu/eurostat/databrowser-backend/api/public/explanatory-notes/get/Info_note_ILC_20251009.pdf"
+        },
+        {
+          "type": "DISSEMINATION_OBJECT_TYPE",
+          "title": "DATASET"
+        },
+        {
+          "type": "DISSEMINATION_TIMESTAMP_DATA",
+          "date": "2026-10-20T11:00:00+0200"
+        },
+        {
+          "type": "DISSEMINATION_TIMESTAMP_GLOBAL",
+          "date": "2026-10-20T11:00:00+0200"
+        },
+        {
+          "type": "DISSEMINATION_TIMESTAMP_PLANNED",
+          "date": "2026-10-20T11:00:00+0200"
+        },
+        {
+          "type": "ESMS_HTML",
+          "title": "Explanatory texts (metadata)",
+          "href": "https://ec.europa.eu/eurostat/cache/metadata/en/ilc_sieusilc.htm"
+        },
+        {
+          "type": "ESMS_SDMX",
+          "title": "Explanatory texts (metadata)",
+          "href": "https://ec.europa.eu/eurostat/api/dissemination/files?file=metadata/ilc_sieusilc.sdmx.zip"
+        },
+        {
+          "type": "OBS_COUNT",
+          "title": "331404"
+        },
+        {
+          "type": "OBS_PERIOD_OVERALL_LATEST",
+          "title": "2025"
+        },
+        {
+          "type": "OBS_PERIOD_OVERALL_OLDEST",
+          "title": "1995"
+        },
+        {
+          "type": "SOURCE_INSTITUTIONS",
+          "text": "Eurostat"
+        },
+        {
+          "type": "UPDATE_DATA",
+          "date": "2026-10-20T11:00:00+0200"
+        },
+        {
+          "type": "UPDATE_STRUCTURE",
+          "date": "2026-05-22T11:00:00+0200"
+        }
+      ],
+      "status": {
+        "label": {
+          "b": "break in time series",
+          "p": "provisional"
+        }
+      },
+      "positions-with-no-data": {
+        "freq": [],
+        "age": [],
+        "sex": [],
+        "statinfo": [],
+        "unit": [],
+        "geo": [],
+        "time": []
+      }
+    }
+  }
+}

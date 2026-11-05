@@ -20,9 +20,9 @@ python -m pip check
 
 `requirements.txt` records the analysis packages. `requirements-notebook.txt` includes them and adds the IPython kernel packages used in VS Code.
 
-Select that environment as the kernel for each notebook. For local kernels, set `jupyter.notebookFileRoot` to `${fileDirname}`, the [extension's default](https://github.com/microsoft/vscode-jupyter/blob/main/package.json). All three notebooks must run with `notebooks/` as their working directory. This supports both the existing `../data/` paths and the local `income_utils` import.
+Select that environment as the kernel for each notebook. For local kernels, set `jupyter.notebookFileRoot` to `${fileDirname}`, the [extension's default](https://github.com/microsoft/vscode-jupyter/blob/main/package.json). All notebooks must run with `notebooks/` as their working directory. This supports both the existing `../data/` paths and the local `income_utils` import.
 
-## Execution order and files
+## Frozen baseline: execution order and files
 
 Use **Restart Kernel**, then **Run All**, for each notebook in this order:
 
@@ -84,3 +84,29 @@ Income validation, exact comparison with the selected raw records, all three HIC
 
 Execution evidence comes from the author's Windows run; the review covered the submitted code and saved outputs. This verifies reproduction of the current raw snapshot in that environment. The requirements files pin the recorded packages, but are not a complete lock of transitive dependencies.
 
+## EUR and PPS notebook
+
+Run `notebooks/04_eur_pps_comparison.ipynb` independently using **Restart Kernel → Run All**, with the `eurostat-income-repro` kernel and `notebooks/` as the working directory.
+
+This notebook retrieves live `ilc_di03` data through the repository's `eurostat_api.py`. It requires internet access and does not depend on outputs from notebooks `01`–`03`. The existing analysis dependencies are sufficient.
+
+The selection is `MED_EI`, `sex=T`, `age=TOTAL`, with published EUR and PPS values. Country membership remains fixed across years within each run.
+
+### Recorded run: 2026-11-05
+
+- API retrieval: `2026-11-05T20:11:01+00:00`.
+- Coverage: 37 countries, survey years 2003–2025, 851 country-year rows.
+- Only 2018 has complete paired coverage of all 37 countries. Other annual ranks remain missing.
+- Greece ranks 23rd in EUR and 28th in PPS: `rank_change = -5`.
+- Missing values and complete flags are retained without imputation.
+
+| Output | Contents |
+| --- | --- |
+| `data/processed/eur_pps_comparison_2003_2025.csv` | All 851 country-year rows, including missing values and ranks. |
+| `data/processed/eur_pps_comparison_2018.csv` | Complete comparison of 37 countries, including ranks and flags. |
+| `reports/figures/eur_pps_comparison_2018.png` | EUR and PPS panels with Greece highlighted. |
+| `data/processed/eur_pps_source_2003_2025.json` | Request URL, retrieval time, filters, country list and provider metadata. |
+
+The author's saved Windows execution records Python 3.13.17, pandas 3.1.0 and 20 non-empty code cells with execution counts 1–20, without error or stderr outputs. Review covered the code, saved outputs and independent recalculation of all 37 country ranks; it was not a separate full notebook rerun.
+
+Live API revisions can change values, flags, available years and the country catalogue. Preserve the exports and source JSON when the recorded retrieval is needed. See the [Eurostat API introduction](https://ec.europa.eu/eurostat/web/user-guides/data-browser/api-data-access/api-introduction).
