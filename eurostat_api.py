@@ -104,9 +104,10 @@ def jsonstat_to_frame(data):
     
 
 def fetch_income(
-    countries, start_year, end_year, indicator="MED_EI", unit="EUR", ages=None
+    countries, start_year, end_year, indicator="MED_EI", unit="EUR",
+    ages=None, sexes=None,
 ):
-    """Fetch selected ilc_di03 series for total sex and selected age groups."""
+    """Fetch selected ilc_di03 series for selected age and sex groups."""
     if not isinstance(countries, (list, tuple)) or not countries:
         raise ValueError("Provide a non-empty list of Eurostat country codes.")
     if any(not isinstance(code, str) or not code.strip() for code in countries):
@@ -125,6 +126,17 @@ def fetch_income(
         raise ValueError("Provide a non-empty list of Eurostat age codes.")
     if any(not isinstance(code, str) or code not in valid_ages for code in ages):
         raise ValueError(f"Supported age codes: {valid_ages}")
+        
+    # Preserve existing callers that omit sex selection.
+    if sexes is None:
+        sexes = ["T"]
+
+    valid_sexes = ["F", "M", "T"]
+    if not isinstance(sexes, (list, tuple)) or not sexes:
+        raise ValueError("Provide a non-empty list of Eurostat sex codes.")
+    if any(not isinstance(code, str) or code not in valid_sexes for code in sexes):
+        raise ValueError(f"Supported sex codes: {valid_sexes}")
+    sexes = list(dict.fromkeys(sexes))
 
     countries = list(dict.fromkeys(code.strip().upper() for code in countries))
     ages = list(dict.fromkeys(ages))
@@ -138,7 +150,7 @@ def fetch_income(
     )
     params = {
         "lang": "EN", "freq": "A", "geo": countries,
-        "age": ages, "sex": "T", "statinfo": indicator, "unit": unit,
+        "age": ages, "sex": sexes, "statinfo": indicator, "unit": unit,
         "sinceTimePeriod": start_year, "untilTimePeriod": end_year,
     }
     url = endpoint + "?" + urlencode(params, doseq=True)
@@ -146,7 +158,7 @@ def fetch_income(
 
     years = [str(year) for year in range(start_year, end_year + 1)]
     allowed = {
-        "freq": ["A"], "age": ages, "sex": ["T"],
+        "freq": ["A"], "age": ages, "sex": sexes,
         "statinfo": [indicator], "unit": [unit], "geo": countries, "time": years,
     }
     if set(data.get("id", [])) != set(allowed):
@@ -157,16 +169,16 @@ def fetch_income(
         if not frame[dim].isin(codes).all():
             raise ValueError(f"Response does not match the {dim} filter.")
 
-    # Age is part of the key: one country-year can have several observations.
-    key = ["geo", "age", "time"]
+    # Keep every dimension in the observation key.
+    key = ["freq", "age", "sex", "statinfo", "unit", "geo", "time"]
     if frame.duplicated(key).any():
-        raise ValueError("Duplicate country-age-year observations.")
+        raise ValueError("Duplicate income observations.")
     if frame.empty or frame["value"].isna().all():
         raise ValueError("No income observations are available for these filters.")
 
     requested = pd.MultiIndex.from_product(
-        [countries, ages, years], names=key
-    )
+        [["A"], ages, sexes, [indicator], [unit], countries, years],
+        names=key)
     coverage = frame.set_index(key)["value"].reindex(requested)
     missing = coverage[coverage.isna()].index.to_frame(index=False)
 

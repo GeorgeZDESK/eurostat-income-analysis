@@ -36,13 +36,22 @@ def load_income(countries, start_year, end_year, indicator, unit, ages):
 
 # Keep the view selector outside the form so its controls update immediately.
 view = st.sidebar.radio(
-    "View",
+    "Analysis",
     [
         "Countries",
         "Age groups",
         "Real change (Greece)",
         "Housing",
-        "Urbanisation"])
+        "Urbanisation",
+    ],
+    index=None)
+
+# Wait for an explicit selection before loading analysis options.
+if view is None:
+    st.title("EURO_DATA | Income explorer")
+    st.info("Choose an analysis from the sidebar to begin.")
+    st.stop()
+
 age_view = view == "Age groups"
 
 if view == "Urbanisation":
@@ -79,10 +88,7 @@ labels = {
 country_options = sorted(labels["geo"], key=labels["geo"].get)
 years = sorted(available["time"].astype(int).unique().tolist())
 indicators = sorted(labels["statinfo"])
-default_period = (
-    (2022, 2024)
-    if {2022, 2024}.issubset(years)
-    else (years[0], years[-1]))
+
 
 if view == "Real change (Greece)":
     render_real_income_view(years, labels["statinfo"], AGE_LABELS)
@@ -96,35 +102,37 @@ with st.sidebar:
             country = st.selectbox(
                 "Country",
                 options=country_options,
-                index=country_options.index("EL") if "EL" in country_options else 0,
+                index=None,
                 format_func=labels["geo"].get,
             )
-            countries = [country]
+            countries = [country] if country is not None else []
             ages = [code for code in AGE_LABELS if code != "TOTAL"]
             st.caption("The five published age groups are shown separately.")
         else:
             countries = st.multiselect(
                 "Countries",
                 options=country_options,
-                default=[code for code in ["EL", "DE", "FR"] if code in labels["geo"]],
+                default=[],
                 format_func=labels["geo"].get,
             )
             ages = ["TOTAL"]
 
-        start_year, end_year = st.select_slider(
-            "Survey years",
-            options=years,
-            value=default_period,
+        start_year = st.selectbox(
+            "Start survey year", options=years, index=None
+        )
+        end_year = st.selectbox(
+            "End survey year", options=years, index=None
         )
         indicator = st.selectbox(
             "Income measure",
             options=indicators,
-            index=indicators.index("MED_EI"),
+            index=None,
             format_func=labels["statinfo"].get,
         )
         unit = st.selectbox(
             "Unit",
             options=sorted(labels["unit"]),
+            index=None,
             format_func=labels["unit"].get,
         )
         submitted = st.form_submit_button("Load data", type="primary")
@@ -135,8 +143,21 @@ if not submitted:
     st.info("Choose filters in the sidebar, then select Load data.")
     st.stop()
 
-if not countries:
-    st.warning("Select at least one country.")
+if (
+    not countries
+    or start_year is None
+    or end_year is None
+    or indicator is None
+    or unit is None
+):
+    st.warning(
+        "Select at least one country, both survey years, "
+        "an income measure and a unit."
+    )
+    st.stop()
+
+if end_year < start_year:
+    st.warning("The end year must not be earlier than the start year.")
     st.stop()
 
 try:
