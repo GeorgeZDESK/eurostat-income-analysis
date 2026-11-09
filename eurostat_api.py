@@ -104,18 +104,34 @@ def jsonstat_to_frame(data):
     
 
 def fetch_income(
-    countries, start_year, end_year, indicator="MED_EI", unit="EUR",
-    ages=None, sexes=None,
+    countries, start_year=None, end_year=None, indicator="MED_EI", unit="EUR",
+    ages=None, sexes=None, *, survey_years=None,
 ):
-    """Fetch selected ilc_di03 series for selected age and sex groups."""
+    """Fetch ilc_di03 observations for a range or specific survey years."""
     if not isinstance(countries, (list, tuple)) or not countries:
         raise ValueError("Provide a non-empty list of Eurostat country codes.")
     if any(not isinstance(code, str) or not code.strip() for code in countries):
         raise ValueError("Country codes must be non-empty strings.")
-    if type(start_year) is not int or type(end_year) is not int:
-        raise ValueError("Survey years must be integers.")
-    if start_year < 2003 or end_year < start_year:
-        raise ValueError("Use survey years from 2003 with start_year <= end_year.")
+
+    if survey_years is None:
+        if type(start_year) is not int or type(end_year) is not int:
+            raise ValueError("Survey years must be integers.")
+        if start_year < 2003 or end_year < start_year:
+            raise ValueError("Use survey years from 2003 with start_year <= end_year.")
+        selected_years = range(start_year, end_year + 1)
+        time_params = {
+            "sinceTimePeriod": start_year,
+            "untilTimePeriod": end_year,
+        }
+    else:
+        if start_year is not None or end_year is not None:
+            raise ValueError("Choose a year range or specific survey years.")
+        if not isinstance(survey_years, (list, tuple)) or not survey_years:
+            raise ValueError("Provide a non-empty list of survey years.")
+        if any(type(year) is not int or year < 2003 for year in survey_years):
+            raise ValueError("Use integer survey years from 2003.")
+        selected_years = sorted(set(survey_years))
+        time_params = {"time": selected_years}
 
     # Default to total age; accept only the groups selected for this explorer.
     if ages is None:
@@ -144,23 +160,28 @@ def fetch_income(
     if "TOTAL" in ages and len(ages) > 1:
         raise ValueError("Request TOTAL separately from the selected age groups.")
 
+    units = [unit] if isinstance(unit, str) else unit
+    if not isinstance(units, (list, tuple)) or not units:
+        raise ValueError("Provide a unit code or a non-empty list of unit codes.")
+    valid_units = ["EUR", "PPS", "NAC"]
+    if any(not isinstance(code, str) or code not in valid_units for code in units):
+        raise ValueError(f"Supported income units: {valid_units}")
+    units = list(dict.fromkeys(units))
+
     endpoint = (
         "https://ec.europa.eu/eurostat/api/dissemination/"
-        "statistics/1.0/data/ilc_di03"
-    )
+        "statistics/1.0/data/ilc_di03")
     params = {
         "lang": "EN", "freq": "A", "geo": countries,
-        "age": ages, "sex": sexes, "statinfo": indicator, "unit": unit,
-        "sinceTimePeriod": start_year, "untilTimePeriod": end_year,
-    }
+        "age": ages, "sex": sexes, "statinfo": indicator, "unit": units}
+    params.update(time_params)
     url = endpoint + "?" + urlencode(params, doseq=True)
     data, retrieved_at = _request_json(url)
 
-    years = [str(year) for year in range(start_year, end_year + 1)]
+    years = [str(year) for year in selected_years]
     allowed = {
         "freq": ["A"], "age": ages, "sex": sexes,
-        "statinfo": [indicator], "unit": [unit], "geo": countries, "time": years,
-    }
+        "statinfo": [indicator], "unit": units, "geo": countries, "time": years}
     if set(data.get("id", [])) != set(allowed):
         raise ValueError("Unexpected ilc_di03 dimensions.")
 
@@ -177,7 +198,7 @@ def fetch_income(
         raise ValueError("No income observations are available for these filters.")
 
     requested = pd.MultiIndex.from_product(
-        [["A"], ages, sexes, [indicator], [unit], countries, years],
+        [["A"], ages, sexes, [indicator], units, countries, years],
         names=key)
     coverage = frame.set_index(key)["value"].reindex(requested)
     missing = coverage[coverage.isna()].index.to_frame(index=False)
@@ -589,6 +610,67 @@ def fetch_urban_catalogue():
         "geo_level": "country",
     })
     return frame
+
+def fetch_income_for_changes(
+    countries, survey_years, indicator="MED_EI", unit="EUR",
+    ages=None, sexes=None, *,
+    include_previous_years=False, include_period_years=False,
+):
+    """Fetch selected years and the inputs for requested changes together."""
+    if not isinstance(survey_years, (list, tuple)) or not survey_years:
+        raise ValueError("Provide a non-empty list of survey years.")
+    if any(type(year) is not int or year < 2003 for year in survey_years):
+        raise ValueError("Use integer survey years from 2003.")
+
+    selected_years = sorted(set(survey_years))
+    annual_auxiliary_years = []
+    out_of_scope_years = []
+    if include_previous_years:
+        previous_years = {year - 1 for year in selected_years}
+        annual_auxiliary_years = sorted(
+            year for year in previous_years
+            if year >= 2003 and year not in selected_years
+        )
+        out_of_scope_years = sorted(year for year in previous_years if year < 2003)
+
+    period_auxiliary_years = []
+    if include_period_years:
+        if len(selected_years) < 2:
+            raise ValueError("Select at least two distinct survey years for a period.")
+        period_auxiliary_years = [
+            year for year in range(selected_years[0] + 1, selected_years[-1])
+            if year not in selected_years
+        ]
+
+    auxiliary_years = sorted(set(annual_auxiliary_years + period_auxiliary_years))
+    query_years = sorted(selected_years + auxiliary_years)
+    frame = fetch_income(
+        countries, indicator=indicator, unit=unit, ages=ages, sexes=sexes,
+        survey_years=query_years,
+    )
+    selected_year_codes = [str(year) for year in selected_years]
+    selected_mask = frame["time"].isin(selected_year_codes)
+    frame["year_role"] = "Auxiliary"
+    frame.loc[selected_mask, "year_role"] = "Selected"
+    frame.attrs.update({
+        "selected_survey_years": selected_years,
+        "auxiliary_survey_years": auxiliary_years,
+        "annual_auxiliary_survey_years": annual_auxiliary_years,
+        "period_auxiliary_survey_years": period_auxiliary_years,
+        "out_of_scope_previous_years": out_of_scope_years,
+    })
+    return frame
+
+
+def fetch_income_with_previous_years(
+    countries, survey_years, indicator="MED_EI", unit="EUR",
+    ages=None, sexes=None,
+):
+    """Fetch selected survey years and their previous-year inputs together."""
+    return fetch_income_for_changes(
+        countries, survey_years, indicator=indicator, unit=unit,
+        ages=ages, sexes=sexes, include_previous_years=True,
+    )
 
 
 
