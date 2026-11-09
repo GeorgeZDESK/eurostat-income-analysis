@@ -8,3 +8,6 @@ dependencies:
       - altair==6.3.0
       - pandas==3.1.0
       - numpy==2.5.4
+      - XlsxWriter==3.2.9
+      - vl-convert-python==1.9.0
+      - reportlab==4.4.10
